@@ -89,6 +89,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "rxjs": "^6.5.4"
   }
 }

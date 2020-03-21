@@ -14,7 +14,7 @@ body {
   justify-content: center;
 }
 
-.time {
+#time {
   font-size: 100px;
   color: #DEC022;
 }
@@ -37,12 +37,20 @@ body {
   outline: 0;
 }
 
-.controls .start {
+.controls #start {
   margin-left: 40px;
   background: #DEC022;
 }
 
-.controls .stop {
+.controls #start:active {
+  background: #EADA87;
+}
+
+.controls #stop {
   margin-left: 20px;
   background: #F96262;
+}
+
+.controls #stop:active {
+  background: #FD9191;
 }

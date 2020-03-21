@@ -1,31 +1,30 @@
-/**
- * This file will automatically be loaded by webpack and run in the "renderer" context.
- * To learn more about the differences between the "main" and the "renderer" context in
- * Electron, visit:
- *
- * https://electronjs.org/docs/tutorial/application-architecture#main-and-renderer-processes
- *
- * By default, Node.js integration in this file is disabled. When enabling Node.js integration
- * in a renderer process, please be aware of potential security implications. You can read
- * more about security risks here:
- *
- * https://electronjs.org/docs/tutorial/security
- *
- * To enable Node.js integration in this file, open up `main.js` and enable the `nodeIntegration`
- * flag:
- *
- * ```
- *  // Create the browser window.
- *  mainWindow = new BrowserWindow({
- *    width: 800,
- *    height: 600,
- *    webPreferences: {
- *      nodeIntegration: true
- *    }
- *  });
- * ```
- */
-
 import './index.css';
+import { Timer } from './timer';
+import { Subscription } from 'rxjs';
 
-console.log('👋 This message is being logged by "renderer.js", included via webpack');
+const startButton = document.getElementById('start');
+const stopButton = document.getElementById('stop');
+const time = document.getElementById('time');
+const timer = new Timer();
+let subscription: Subscription = null;
+
+startButton.addEventListener('click', () => {
+  if (!subscription) {
+    subscription = timer.start().subscribe(remainingTime => time.innerText = formatTime(remainingTime));
+  }
+});
+
+stopButton.addEventListener('click', () => {
+  if (!!subscription) {
+    timer.stop();
+    subscription.unsubscribe();
+    subscription = null;
+  }
+});
+
+function formatTime(timeInSeconds: number): string {
+  const seconds = timeInSeconds % 60;
+  const secondsToDisplay = seconds < 10 ? `0${seconds}` : seconds;
+  const minutes = (timeInSeconds - seconds) / 60;
+  return `${minutes}:${secondsToDisplay}`;
+}

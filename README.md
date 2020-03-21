@@ -2,7 +2,7 @@
 Pomodoro timer created with Electron
 
 ## To do
-- [ ] Basic timer with start, stop options
+- [x] Basic timer with start, stop options
 - [ ] Add icon to system tray
 - [ ] Show notification when the time is up
 - [ ] Set up pomodoro cycle with short and long breaks
