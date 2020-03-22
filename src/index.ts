@@ -1,4 +1,7 @@
 import { app, BrowserWindow } from 'electron';
+import * as path from 'path';
+import icon from '../assets/tomato.png';
+
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -11,6 +14,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     height: 350,
     width: 500,
+    icon: path.join(__dirname, icon),
   });
 
   // and load the index.html of the app.
