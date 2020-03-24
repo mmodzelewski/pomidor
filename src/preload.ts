@@ -5,9 +5,9 @@ import { Observable } from 'rxjs';
 declare global {
   interface Window {
     timer: {
-      start: () => void,
-      stop: () => void,
-      updates: Observable<number>,
+      start: () => void;
+      stop: () => void;
+      updates: Observable<number>;
     };
   }
 }

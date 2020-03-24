@@ -5,7 +5,7 @@ const stopButton = document.getElementById('stop');
 const time = document.getElementById('time');
 const timer = window.timer;
 
-timer.updates.subscribe(remainingTime => time.innerText = formatTime(remainingTime));
+timer.updates.subscribe((remainingTime) => (time.innerText = formatTime(remainingTime)));
 
 startButton.addEventListener('click', () => timer.start());
 

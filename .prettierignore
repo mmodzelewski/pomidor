@@ -1,0 +1,10 @@
+package.json
+package-lock.json
+.gitignore
+.prettierignore
+*.iml
+*.xml
+.idea/
+.sourcemaps/
+node_modules/
+assets/

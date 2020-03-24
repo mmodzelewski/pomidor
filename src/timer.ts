@@ -1,7 +1,6 @@
 import { Observable, Subject } from 'rxjs';
 
 export class Timer {
-
   private remainingTime = 25 * 60;
   private intervalId: NodeJS.Timeout = null;
   private timeChange: Subject<number> = new Subject<number>();
@@ -33,5 +32,5 @@ export class Timer {
 
 export enum TimerAction {
   START = 'START',
-  STOP = 'STOP'
+  STOP = 'STOP',
 }
