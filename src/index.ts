@@ -1,8 +1,10 @@
-import { app, BrowserWindow, Menu, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, Tray } from 'electron';
 import * as path from 'path';
 import icon from '../assets/tomato.png';
+import { Timer, TimerAction } from './timer';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
+declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: any;
 
 let tray = null;
 let mainWindow: BrowserWindow = null;
@@ -24,6 +26,13 @@ const createWindow = () => {
     icon: path.join(__dirname, icon),
     resizable: false,
     kiosk: true,
+    webPreferences: {
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+    },
+  });
+
+  mainWindow.on('close', () => {
+    mainWindow = null;
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -59,3 +68,21 @@ app.on('activate', () => {
 function hasNoWindows() {
   return BrowserWindow.getAllWindows().length === 0;
 }
+
+let timer = new Timer();
+timer.updates.subscribe(remainingTime => {
+  mainWindow?.webContents.send('time-update', remainingTime);
+});
+
+ipcMain.on('timer-actions', (event, args) => {
+  switch (args) {
+    case TimerAction.START:
+      timer.start();
+      break;
+    case TimerAction.STOP:
+      timer.stop();
+      break;
+    default:
+      throw 'unhandled action';
+  }
+});

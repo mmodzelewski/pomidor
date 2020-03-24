@@ -6,9 +6,13 @@ export class Timer {
   private intervalId: NodeJS.Timeout = null;
   private timeChange: Subject<number> = new Subject<number>();
 
-  start(): Observable<number> {
+  get updates(): Observable<number> {
+    return this.timeChange;
+  }
+
+  start(): void {
     if (!!this.intervalId) {
-      return this.timeChange;
+      return;
     }
     this.intervalId = setInterval(() => {
       this.remainingTime--;
@@ -17,7 +21,6 @@ export class Timer {
         this.stop();
       }
     }, 1000);
-    return this.timeChange;
   }
 
   stop(): void {
@@ -26,4 +29,9 @@ export class Timer {
       this.intervalId = null;
     }
   }
+}
+
+export enum TimerAction {
+  START = 'START',
+  STOP = 'STOP'
 }
