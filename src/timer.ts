@@ -9,6 +9,10 @@ export class Timer {
     return this.timeChange;
   }
 
+  get currentTime(): number {
+    return this.timeChange.value;
+  }
+
   start(): void {
     if (this.intervalId) {
       return;

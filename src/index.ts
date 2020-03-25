@@ -9,10 +9,10 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 let tray = null;
 let mainWindow: BrowserWindow = null;
+const timer = new Timer();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
-  // eslint-disable-line global-require
   app.quit();
 }
 
@@ -30,6 +30,10 @@ function createWindow(): void {
 
   mainWindow.on('close', () => {
     mainWindow = null;
+  });
+
+  mainWindow.webContents.on('dom-ready', () => {
+    mainWindow.webContents.send('time-update', timer.currentTime);
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -71,7 +75,6 @@ app.on('activate', () => {
   }
 });
 
-const timer = new Timer();
 timer.updates.subscribe((remainingTime) => {
   mainWindow?.webContents.send('time-update', remainingTime);
 });
