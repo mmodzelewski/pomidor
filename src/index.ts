@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, Notification, Tray } from 'electron';
 import * as path from 'path';
 import icon from '../assets/tomato.png';
 import { Timer, TimerAction } from './timer';
@@ -46,18 +46,19 @@ function hasNoWindows(): boolean {
   return BrowserWindow.getAllWindows().length === 0;
 }
 
+function createOrShowWindow(): void {
+  if (hasNoWindows()) {
+    createWindow();
+  } else {
+    mainWindow.show();
+  }
+}
+
 function setUpTray(): void {
   tray = new Tray(path.join(__dirname, icon));
   const contextMenu = Menu.buildFromTemplate([]);
   tray.setContextMenu(contextMenu);
-
-  tray.on('click', () => {
-    if (hasNoWindows()) {
-      createWindow();
-    } else {
-      mainWindow.show();
-    }
-  });
+  tray.on('click', createOrShowWindow);
 }
 
 function onReady(): void {
@@ -75,8 +76,20 @@ app.on('activate', () => {
   }
 });
 
+function sendTimesUpNotification(remainingTime: number): void {
+  if (remainingTime === 0 && Notification.isSupported()) {
+    const notification = new Notification({
+      title: 'Pomodoro timer',
+      body: "Time's up",
+    });
+    notification.on('click', createOrShowWindow);
+    notification.show();
+  }
+}
+
 timer.updates.subscribe((remainingTime) => {
   mainWindow?.webContents.send('time-update', remainingTime);
+  sendTimesUpNotification(remainingTime);
 });
 
 ipcMain.on('timer-actions', (event, args) => {
