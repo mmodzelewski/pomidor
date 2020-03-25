@@ -13,10 +13,10 @@ declare global {
 }
 
 window.timer = {
-  start: () => {
+  start: (): void => {
     ipcRenderer.send('timer-actions', TimerAction.START);
   },
-  stop: () => {
+  stop: (): void => {
     ipcRenderer.send('timer-actions', TimerAction.STOP);
   },
   updates: new Observable((subscriber) => {

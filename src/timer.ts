@@ -10,7 +10,7 @@ export class Timer {
   }
 
   start(): void {
-    if (!!this.intervalId) {
+    if (this.intervalId) {
       return;
     }
     this.intervalId = setInterval(() => {
@@ -23,7 +23,7 @@ export class Timer {
   }
 
   stop(): void {
-    if (!!this.intervalId) {
+    if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }
