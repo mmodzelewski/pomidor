@@ -1,9 +1,9 @@
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export class Timer {
-  private remainingTime = 25 * 60;
+  private readonly startValue = 25 * 60;
   private intervalId: NodeJS.Timeout = null;
-  private timeChange: Subject<number> = new Subject<number>();
+  private timeChange: BehaviorSubject<number> = new BehaviorSubject<number>(this.startValue);
 
   get updates(): Observable<number> {
     return this.timeChange;
@@ -13,10 +13,12 @@ export class Timer {
     if (this.intervalId) {
       return;
     }
+    if (this.timeChange.value === 0) {
+      this.timeChange.next(this.startValue);
+    }
     this.intervalId = setInterval(() => {
-      this.remainingTime--;
-      this.timeChange.next(this.remainingTime);
-      if (this.remainingTime === 0) {
+      this.timeChange.next(this.timeChange.value - 1);
+      if (this.timeChange.value === 0) {
         this.stop();
       }
     }, 1000);
