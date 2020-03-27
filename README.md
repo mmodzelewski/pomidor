@@ -12,5 +12,5 @@ Pomodoro timer created with Electron
 - [ ] Set up pomodoro cycle with short and long breaks
 - [ ] Add settings for changing time-frames
 - [ ] Add slack integration for changing user's status
-- [ ] Build packages for Linux, MacOS and Windows
-- [ ] Set up automatic build process
+- [x] Build packages for Linux, MacOS and Windows
+- [x] Set up automatic build process
