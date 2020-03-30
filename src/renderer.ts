@@ -1,7 +1,7 @@
 import './index.css';
 
 const startButton = document.getElementById('start');
-const stopButton = document.getElementById('stop');
+const stopButton = document.getElementById('pause');
 const time = document.getElementById('time');
 const timer = window.timer;
 
