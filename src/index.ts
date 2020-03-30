@@ -9,7 +9,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 let tray = null;
 let mainWindow: BrowserWindow = null;
-const timer = new Timer();
+const timer = new Timer(25);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -33,7 +33,8 @@ function createWindow(): void {
   });
 
   mainWindow.webContents.on('dom-ready', () => {
-    mainWindow.webContents.send('time-update', timer.currentTime);
+    mainWindow.webContents.send('time-update', timer.time);
+    mainWindow.webContents.send('state-update', timer.state);
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -87,18 +88,22 @@ function sendTimesUpNotification(remainingTime: number): void {
   }
 }
 
-timer.updates.subscribe((remainingTime) => {
+timer.timeUpdates.subscribe((remainingTime) => {
   mainWindow?.webContents.send('time-update', remainingTime);
   sendTimesUpNotification(remainingTime);
+});
+
+timer.stateUpdates.subscribe((state) => {
+  mainWindow?.webContents.send('state-update', state);
 });
 
 ipcMain.on('timer-actions', (event, args) => {
   switch (args) {
     case TimerAction.START:
-      timer.start();
+      timer.start(25);
       break;
-    case TimerAction.STOP:
-      timer.stop();
+    case TimerAction.PAUSE:
+      timer.pause();
       break;
     default:
       throw 'unhandled action';

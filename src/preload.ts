@@ -1,13 +1,14 @@
 import { ipcRenderer } from 'electron';
-import { TimerAction } from './timer';
+import { TimerAction, TimerState } from './timer';
 import { Observable } from 'rxjs';
 
 declare global {
   interface Window {
     timer: {
       start: () => void;
-      stop: () => void;
-      updates: Observable<number>;
+      pause: () => void;
+      timeUpdates: Observable<number>;
+      stateUpdates: Observable<TimerState>;
     };
   }
 }
@@ -16,12 +17,17 @@ window.timer = {
   start: (): void => {
     ipcRenderer.send('timer-actions', TimerAction.START);
   },
-  stop: (): void => {
-    ipcRenderer.send('timer-actions', TimerAction.STOP);
+  pause: (): void => {
+    ipcRenderer.send('timer-actions', TimerAction.PAUSE);
   },
-  updates: new Observable((subscriber) => {
+  timeUpdates: new Observable((subscriber) => {
     ipcRenderer.on('time-update', (event, args) => {
       subscriber.next(+args);
+    });
+  }),
+  stateUpdates: new Observable((subscriber) => {
+    ipcRenderer.on('state-update', (event, args) => {
+      subscriber.next(args);
     });
   }),
 };
