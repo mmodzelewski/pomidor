@@ -1,15 +1,16 @@
 import { app, BrowserWindow, ipcMain, Menu, Notification, Tray } from 'electron';
 import * as path from 'path';
 import icon from '../assets/tomato.png';
-import { Timer, TimerAction } from './timer';
+import { TimerAction } from './timer';
 import { noop } from './utility';
+import { PomodoroTimer } from './pomodoro-timer';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 let tray = null;
 let mainWindow: BrowserWindow = null;
-const timer = new Timer(25);
+const timer = new PomodoroTimer();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -35,6 +36,7 @@ function createWindow(): void {
   mainWindow.webContents.on('dom-ready', () => {
     mainWindow.webContents.send('time-update', timer.time);
     mainWindow.webContents.send('state-update', timer.state);
+    mainWindow.webContents.send('stage-update', timer.stage);
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -97,10 +99,14 @@ timer.stateUpdates.subscribe((state) => {
   mainWindow?.webContents.send('state-update', state);
 });
 
+timer.stageUpdates.subscribe((stage) => {
+  mainWindow?.webContents.send('stage-update', stage);
+});
+
 ipcMain.on('timer-actions', (event, args) => {
   switch (args) {
     case TimerAction.START:
-      timer.start(25);
+      timer.start();
       break;
     case TimerAction.PAUSE:
       timer.pause();

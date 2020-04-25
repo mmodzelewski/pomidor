@@ -1,5 +1,5 @@
-import { BehaviorSubject, Observable } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/internal/operators';
+import { asapScheduler, BehaviorSubject, Observable } from 'rxjs';
+import { distinctUntilChanged, observeOn } from 'rxjs/internal/operators';
 
 export enum TimerAction {
   START,
@@ -13,6 +13,7 @@ export enum TimerState {
 }
 
 export class Timer {
+  private static readonly MINUTE_SECONDS = 60;
   private readonly timeChange: BehaviorSubject<number>;
   private readonly stateChange: BehaviorSubject<TimerState> = new BehaviorSubject<TimerState>(TimerState.STOPPED);
   private intervalId: NodeJS.Timeout = null;
@@ -26,7 +27,7 @@ export class Timer {
   }
 
   get stateUpdates(): Observable<TimerState> {
-    return this.stateChange.pipe(distinctUntilChanged());
+    return this.stateChange.pipe(distinctUntilChanged(), observeOn(asapScheduler));
   }
 
   get time(): number {
@@ -42,7 +43,7 @@ export class Timer {
       return;
     }
     if (this.state === TimerState.STOPPED) {
-      this.timeChange.next(minutes * 60);
+      this.timeChange.next(minutes * Timer.MINUTE_SECONDS);
     }
     this.setInterval();
     this.stateChange.next(TimerState.RUNNING);
