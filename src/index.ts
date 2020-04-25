@@ -4,6 +4,7 @@ import icon from '../assets/tomato.png';
 import { TimerAction } from './timer';
 import { noop } from './utility';
 import { PomodoroTimer } from './pomodoro-timer';
+import { Channel } from './channel';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -34,9 +35,9 @@ function createWindow(): void {
   });
 
   mainWindow.webContents.on('dom-ready', () => {
-    mainWindow.webContents.send('time-update', timer.time);
-    mainWindow.webContents.send('state-update', timer.state);
-    mainWindow.webContents.send('stage-update', timer.stage);
+    mainWindow.webContents.send(Channel.TimeUpdate, timer.time);
+    mainWindow.webContents.send(Channel.StateUpdate, timer.state);
+    mainWindow.webContents.send(Channel.StageUpdate, timer.stage);
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -91,19 +92,19 @@ function sendTimesUpNotification(remainingTime: number): void {
 }
 
 timer.timeUpdates.subscribe((remainingTime) => {
-  mainWindow?.webContents.send('time-update', remainingTime);
+  mainWindow?.webContents.send(Channel.TimeUpdate, remainingTime);
   sendTimesUpNotification(remainingTime);
 });
 
 timer.stateUpdates.subscribe((state) => {
-  mainWindow?.webContents.send('state-update', state);
+  mainWindow?.webContents.send(Channel.StateUpdate, state);
 });
 
 timer.stageUpdates.subscribe((stage) => {
-  mainWindow?.webContents.send('stage-update', stage);
+  mainWindow?.webContents.send(Channel.StageUpdate, stage);
 });
 
-ipcMain.on('timer-actions', (event, args) => {
+ipcMain.on(Channel.TimerActions, (event, args) => {
   switch (args) {
     case TimerAction.START:
       timer.start();

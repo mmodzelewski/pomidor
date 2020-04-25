@@ -2,6 +2,7 @@ import { ipcRenderer } from 'electron';
 import { TimerAction, TimerState } from './timer';
 import { Observable } from 'rxjs';
 import { PomodoroStage } from './pomodoro-timer';
+import { Channel } from './channel';
 
 declare global {
   interface Window {
@@ -17,23 +18,23 @@ declare global {
 
 window.timer = {
   start: (): void => {
-    ipcRenderer.send('timer-actions', TimerAction.START);
+    ipcRenderer.send(Channel.TimerActions, TimerAction.START);
   },
   pause: (): void => {
-    ipcRenderer.send('timer-actions', TimerAction.PAUSE);
+    ipcRenderer.send(Channel.TimerActions, TimerAction.PAUSE);
   },
   timeUpdates: new Observable((subscriber) => {
-    ipcRenderer.on('time-update', (event, args) => {
+    ipcRenderer.on(Channel.TimeUpdate, (event, args) => {
       subscriber.next(+args);
     });
   }),
   stateUpdates: new Observable((subscriber) => {
-    ipcRenderer.on('state-update', (event, args) => {
+    ipcRenderer.on(Channel.StateUpdate, (event, args) => {
       subscriber.next(args);
     });
   }),
   stageUpdates: new Observable((subscriber) => {
-    ipcRenderer.on('stage-update', (event, args) => {
+    ipcRenderer.on(Channel.StageUpdate, (event, args) => {
       subscriber.next(args);
     });
   }),
