@@ -100,8 +100,8 @@ timer.stateUpdates.subscribe((state) => {
   mainWindow?.webContents.send(Channel.StateUpdate, state);
 });
 
-timer.stageUpdates.subscribe((stage) => {
-  mainWindow?.webContents.send(Channel.StageUpdate, stage);
+timer.stageUpdates.subscribe((stageChange) => {
+  mainWindow?.webContents.send(Channel.StageUpdate, stageChange);
 });
 
 ipcMain.on(Channel.TimerActions, (event, args) => {

@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron';
 import { TimerAction, TimerState } from './timer';
 import { Observable } from 'rxjs';
-import { PomodoroStage } from './pomodoro-timer';
+import { StageChange } from './pomodoro-timer';
 import { Channel } from './channel';
 
 declare global {
@@ -11,7 +11,7 @@ declare global {
       pause: () => void;
       timeUpdates: Observable<number>;
       stateUpdates: Observable<TimerState>;
-      stageUpdates: Observable<PomodoroStage>;
+      stageUpdates: Observable<StageChange>;
     };
   }
 }

@@ -1,6 +1,6 @@
 import { Timer, TimerState } from './timer';
 import { distinctUntilChanged, observeOn, skip } from 'rxjs/internal/operators';
-import { asapScheduler, BehaviorSubject, Observable } from 'rxjs';
+import { asapScheduler, Observable, Subject } from 'rxjs';
 
 export interface PomodoroStage {
   id: 'work' | 'shortBreak' | 'longBreak';
@@ -22,10 +22,16 @@ const longBreak: PomodoroStage = {
   time: 15,
 };
 
+export interface StageChange {
+  stage: PomodoroStage;
+  type: 'started' | 'finished';
+}
+
 export class PomodoroTimer {
   private cycle = 0;
   private timer: Timer = new Timer(work.time);
-  private readonly stageChange: BehaviorSubject<PomodoroStage> = new BehaviorSubject<PomodoroStage>(work);
+  private _stage: PomodoroStage = work;
+  private readonly stageChange: Subject<StageChange> = new Subject<StageChange>();
 
   constructor() {
     this.timer.stateUpdates.pipe(skip(1)).subscribe((state) => {
@@ -33,6 +39,10 @@ export class PomodoroTimer {
         this.changeStage();
       }
     });
+  }
+
+  get stage(): PomodoroStage {
+    return this._stage;
   }
 
   get timeUpdates(): Observable<number> {
@@ -43,12 +53,8 @@ export class PomodoroTimer {
     return this.timer.stateUpdates;
   }
 
-  get stageUpdates(): Observable<PomodoroStage> {
+  get stageUpdates(): Observable<StageChange> {
     return this.stageChange.pipe(distinctUntilChanged(), observeOn(asapScheduler));
-  }
-
-  get stage(): PomodoroStage {
-    return this.stageChange.value;
   }
 
   get time(): number {
@@ -60,7 +66,8 @@ export class PomodoroTimer {
   }
 
   start(): void {
-    this.timer.start(this.stage.time);
+    this.stageChange.next({ stage: this._stage, type: 'started' });
+    this.timer.start(this._stage.time);
   }
 
   pause(): void {
@@ -68,22 +75,23 @@ export class PomodoroTimer {
   }
 
   private changeStage(): void {
-    switch (this.stage.id) {
+    this.stageChange.next({ stage: this._stage, type: 'finished' });
+    switch (this._stage.id) {
       case 'work':
         if (this.cycle < 3) {
-          this.stageChange.next(shortBreak);
+          this._stage = shortBreak;
         } else {
-          this.stageChange.next(longBreak);
+          this._stage = longBreak;
         }
         this.start();
         break;
       case 'shortBreak':
-        this.stageChange.next(work);
+        this._stage = work;
         this.cycle++;
         this.start();
         break;
       case 'longBreak':
-        this.stageChange.next(work);
+        this._stage = work;
         this.cycle = 0;
         break;
     }

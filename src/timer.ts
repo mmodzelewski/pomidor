@@ -19,7 +19,7 @@ export class Timer {
   private intervalId: NodeJS.Timeout = null;
 
   constructor(defaultMinutesValue: number) {
-    this.timeChange = new BehaviorSubject<number>(defaultMinutesValue * 60);
+    this.timeChange = new BehaviorSubject<number>(defaultMinutesValue * Timer.MINUTE_SECONDS);
   }
 
   get timeUpdates(): Observable<number> {
