@@ -26,7 +26,7 @@ function createWindow(): void {
     width: 500,
     icon: path.join(__dirname, icon),
     resizable: false,
-    kiosk: true,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
