@@ -5,6 +5,7 @@ import { TimerAction } from './timer';
 import { noop } from './utility';
 import { PomodoroTimer } from './pomodoro-timer';
 import { Channel } from './channel';
+import { addSlackHandlers } from './slack-integration';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -12,6 +13,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 let tray = null;
 let mainWindow: BrowserWindow = null;
 const timer = new PomodoroTimer();
+addSlackHandlers(timer);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
