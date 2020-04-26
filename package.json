@@ -1,6 +1,6 @@
 {
   "name": "pomidor",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Pomodoro timer build with Electron",
   "main": ".webpack/main",
   "scripts": {
